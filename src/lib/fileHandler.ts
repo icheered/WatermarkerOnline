@@ -1,4 +1,5 @@
-import { applyWatermark } from '$lib/imageManipulator.ts';
+import { applyWatermark } from '$lib/imageManipulator';
+import type { WatermarkSettings } from '$lib/types';
 
 
 export async function selectWatermark() {
@@ -6,7 +7,7 @@ export async function selectWatermark() {
     return await fileHandle.getFile();
 }
 
-export async function selectDirectory(dirHandle) {
+export async function selectDirectory(dirHandle: FileSystemDirectoryHandle | null) {
     dirHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
     const promises = [];
     for await (const entry of dirHandle.values()) {
@@ -21,7 +22,7 @@ export async function selectDirectory(dirHandle) {
     return { dirHandle, files }
 }
 
-export async function writeFiles(files, watermarkFile, settings, dirHandle) {
+export async function writeFiles(files: File[], watermarkFile: File | null, settings: WatermarkSettings, dirHandle: FileSystemDirectoryHandle | null) {
     if (!dirHandle || !watermarkFile) {
         console.log('No directory or watermark selected');
         return;
@@ -42,7 +43,7 @@ export async function writeFiles(files, watermarkFile, settings, dirHandle) {
     }
 }
 
-export async function generatePreview(files, watermarkFile, settings) {
+export async function generatePreview(files: File[], watermarkFile: File | null, settings: WatermarkSettings) {
     if (!files.length || !watermarkFile) {
         return;
     }

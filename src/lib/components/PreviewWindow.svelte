@@ -1,15 +1,18 @@
-<script>
-	import { generatePreview } from '$lib/fileHandler.ts';
+<script lang="ts">
+	import { generatePreview } from '$lib/fileHandler';
 
-	export let files;
-	export let watermarkFile;
-	export let settings;
-	let previewImageUrl = '';
+	import type { WatermarkSettings } from '$lib/types';
+
+	export let files: File[];
+	export let watermarkFile: File | null;
+	export let settings: WatermarkSettings;
+
+	let previewImageUrl: string = '';
 
 	$: {
 		if (files && files.length && watermarkFile && settings) {
 			generatePreview(files, watermarkFile, settings).then((url) => {
-				previewImageUrl = url;
+				previewImageUrl = url ?? '';
 			});
 		}
 	}

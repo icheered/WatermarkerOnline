@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { selectDirectory, selectWatermark } from '$lib/fileHandler.ts';
+	import { selectDirectory, selectWatermark } from '$lib/fileHandler';
 
-	export let watermarkFile;
-	export let files;
-	export let dirHandle;
+	export let files: File[];
+	export let watermarkFile: File | null;
+	export let dirHandle: FileSystemDirectoryHandle | null;
 
 	async function getDirectory() {
 		({ dirHandle, files } = await selectDirectory(dirHandle));

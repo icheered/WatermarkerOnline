@@ -1,7 +1,8 @@
 <script lang="ts">
-	export let settings;
+	import type { WatermarkSettings } from '$lib/types';
 
-	export let watermarkFile;
+	export let watermarkFile: File | null;
+	export let settings: WatermarkSettings;
 
 	async function updateWatermarkPosition(event) {
 		settings.watermarkPosition = event.target.value;

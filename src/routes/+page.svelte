@@ -4,11 +4,13 @@
 	import PreviewWindow from '$lib/components/PreviewWindow.svelte';
 	import ExportControls from '$lib/components/ExportControls.svelte';
 
+	import type { WatermarkSettings } from '$lib/types';
+
 	let watermarkFile: File | null = null;
 	let files: File[] = [];
 	let dirHandle: FileSystemDirectoryHandle | null = null;
 
-	let settings = {
+	let settings: WatermarkSettings = {
 		watermarkPosition: 'center'
 	};
 </script>

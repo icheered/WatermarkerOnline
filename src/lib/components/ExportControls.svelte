@@ -1,10 +1,12 @@
-<script>
-	import { writeFiles } from '$lib/fileHandler.ts';
+<script lang="ts">
+	import { writeFiles } from '$lib/fileHandler';
 
-	export let files;
-	export let watermarkFile;
-	export let settings;
-	export let dirHandle;
+	import type { WatermarkSettings } from '$lib/types';
+
+	export let files: File[];
+	export let watermarkFile: File | null;
+	export let settings: WatermarkSettings;
+	export let dirHandle: FileSystemDirectoryHandle | null;
 
 	async function writeToDisk() {
 		await writeFiles(files, watermarkFile, settings, dirHandle);

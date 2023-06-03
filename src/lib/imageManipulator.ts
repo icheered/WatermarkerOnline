@@ -1,4 +1,6 @@
-export async function applyWatermark(imageBlob: Blob, watermarkBlob: Blob, settings) {
+import type { WatermarkSettings } from '$lib/types';
+
+export async function applyWatermark(imageBlob: Blob, watermarkBlob: Blob, settings: WatermarkSettings): Promise<Blob> {
     const loadImage = (blob: Blob) => {
         const image = new Image();
         image.src = URL.createObjectURL(blob);
