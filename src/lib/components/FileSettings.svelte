@@ -1,0 +1,30 @@
+<script lang="ts">
+	import { selectDirectory, selectWatermark } from '$lib/fileHandler.ts';
+
+	export let watermarkFile;
+	export let files;
+	export let dirHandle;
+
+	async function getDirectory() {
+		({ dirHandle, files } = await selectDirectory(dirHandle));
+	}
+
+	async function getWatermarkFile() {
+		watermarkFile = await selectWatermark();
+	}
+</script>
+
+<button class="btn btn-primary" on:click={getDirectory}>Select a Directory</button>
+<button class="btn btn-secondary" on:click={getWatermarkFile}>Select a Watermark</button>
+
+{#if watermarkFile}
+	<h2>Watermark:</h2>
+	<img src={URL.createObjectURL(watermarkFile)} />
+{/if}
+
+{#if dirHandle}
+	<h2>Input Directory:</h2>
+	<p>{dirHandle.name}</p>
+	<h2>Number of Images:</h2>
+	<p>{files.length}</p>
+{/if}
