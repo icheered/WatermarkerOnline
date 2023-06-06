@@ -1,19 +1,33 @@
 <script lang="ts">
 	import type { WatermarkSettings } from '$lib/types';
+	import RadioGrid from '$lib/components/RadioGrid.svelte';
+	import Slider from '$lib/components/Slider.svelte';
+	import { writeFiles, processedFiles } from '$lib/fileHandler';
 
+	export let files: File[];
+	export let dirHandle: FileSystemDirectoryHandle | null;
 	export let watermarkFile: File | null;
 	export let settings: WatermarkSettings;
+	export let isExporting: boolean;
 
-	async function updateWatermarkPosition(event) {
-		settings.watermarkPosition = event.target.value;
+	async function writeToDisk() {
+		isExporting = true;
+		await writeFiles(files, watermarkFile, settings, dirHandle);
 	}
 </script>
 
-{#if watermarkFile}
-	<h2>Watermark Position:</h2>
-	<select on:change={updateWatermarkPosition}>
-		<option value="left">Left</option>
-		<option value="center" selected>Center</option>
-		<option value="right">Right</option>
-	</select>
-{/if}
+<div
+	class="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+>
+	{#if watermarkFile}
+		<RadioGrid bind:position={settings.watermarkPosition} />
+
+		<div class="flex flex-col gap-4 p-4 w-full">
+			<Slider bind:value={settings.opacity} min={0} max={100} name="Opacity" />
+			<Slider bind:value={settings.scale} min={1} max={100} name="Scale" />
+		</div>
+		<button class="btn btn-success" on:click={writeToDisk}>Export files!</button>
+	{:else}
+		Configuration here
+	{/if}
+</div>

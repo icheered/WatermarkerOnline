@@ -1,3 +1,5 @@
 export type WatermarkSettings = {
-    watermarkPosition: 'center' | 'left' | 'right';
+    watermarkPosition: 'topleft' | 'topcenter' | 'topright' | 'left' | 'center' | 'right' | 'bottomleft' | 'bottomcenter' | 'bottomright';
+    opacity: number,
+    scale: number,
 };

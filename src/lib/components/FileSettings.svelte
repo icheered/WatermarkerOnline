@@ -1,41 +1,44 @@
 <script lang="ts">
-	import { selectDirectory, selectWatermark } from '$lib/fileHandler';
-	import { onMount, onDestroy } from 'svelte';
+	//import { selectDirectory, selectWatermark } from '$lib/fileHandler';
+	import { onMount } from 'svelte';
+
+	import FaRegImage from 'svelte-icons/fa/FaRegImage.svelte';
+	import FaRegFolder from 'svelte-icons/fa/FaRegFolder.svelte';
+	import FaRegFolderOpen from 'svelte-icons/fa/FaRegFolderOpen.svelte';
+	import FaRegTimesCircle from 'svelte-icons/fa/FaRegTimesCircle.svelte';
 
 	export let files: File[];
 	export let watermarkFile: File | null;
 	export let dirHandle: FileSystemDirectoryHandle | null;
 
-	async function getDirectory() {
-		({ dirHandle, files } = await selectDirectory(dirHandle));
-	}
+	let dropzoneWatermark, dropzoneFolder; // Moved dropzone here
 
-	async function getWatermarkFile() {
-		watermarkFile = await selectWatermark();
-	}
-
-	let dropzone; // Moved dropzone here
-
-	onMount(() => {
+	function setupDropzone(dropzone, onFile, onDirectory) {
 		if (dropzone) {
 			dropzone.addEventListener('dragover', handleDragOver);
-			dropzone.addEventListener('drop', handleDrop);
+			dropzone.addEventListener('drop', (e) => handleDrop(e, onFile, onDirectory));
 		} else {
 			console.log('No dropzone');
 		}
+
 		return () => {
 			if (dropzone) {
 				dropzone.removeEventListener('dragover', handleDragOver);
 				dropzone.removeEventListener('drop', handleDrop);
 			}
 		};
+	}
+
+	onMount(() => {
+		setupDropzone(dropzoneWatermark, handleWatermarkFile, handleWatermarkDirectory);
+		setupDropzone(dropzoneFolder, handleFolderFile, handleFolderDirectory);
 	});
+
 	function handleDragOver(e) {
-		// Prevent navigation.
 		e.preventDefault();
 	}
 
-	async function handleDrop(e) {
+	async function handleDrop(e, onFile, onDirectory) {
 		e.preventDefault();
 		const fileHandlesPromises = [...e.dataTransfer.items]
 			.filter((item) => item.kind === 'file')
@@ -44,57 +47,165 @@
 		for await (const handle of fileHandlesPromises) {
 			if (handle.kind === 'directory') {
 				console.log(`Directory: ${handle.name}`);
+				onDirectory(handle);
 			} else {
 				console.log(`File: ${handle.name}`);
-				watermarkFile = await handle.getFile();
+				onFile(handle);
 			}
 		}
 	}
+
+	async function selectWatermark() {
+		if (watermarkFile) return;
+		const [fileHandle] = await window.showOpenFilePicker({
+			types: [
+				{
+					description: 'Images',
+					accept: {
+						'image/png': ['.png'],
+						'image/jpeg': ['.jpg', '.jpeg']
+					}
+				}
+			]
+		});
+		await handleWatermarkFile(fileHandle);
+	}
+
+	async function selectDirectory() {
+		console.log('Selecting directory');
+		if (dirHandle) return;
+		dirHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+		await handleFolderDirectory(dirHandle);
+	}
+
+	async function handleWatermarkFile(fileHandle) {
+		watermarkFile = await fileHandle.getFile();
+	}
+
+	async function handleWatermarkDirectory(directory) {
+		console.log('Unexpected directory in watermark dropzone');
+	}
+
+	async function handleFolderFile(file) {
+		console.log('Unexpected file in folder dropzone');
+	}
+
+	async function handleFolderDirectory(directoryHandle) {
+		dirHandle = directoryHandle;
+		const promises = [];
+		for await (const entry of dirHandle.values()) {
+			if (entry.kind !== 'file') {
+				continue;
+			}
+			//Check if images are .jpg or .jpeg or .png
+			if (
+				!entry.name.endsWith('.jpg') &&
+				!entry.name.endsWith('.jpeg') &&
+				!entry.name.endsWith('.png')
+			) {
+				continue;
+			}
+			promises.push(entry.getFile());
+		}
+		files = await Promise.all(promises);
+	}
 </script>
 
-<div class="flex items-center justify-center w-full">
-	<label
-		for="dropzone-watermark"
-		class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+<div class="flex flex-row w-full gap-8 p-8">
+	<div
+		class="flex items-center justify-center w-full"
+		bind:this={dropzoneFolder}
+		on:click={selectDirectory}
+		on:keydown={selectDirectory}
 	>
-		<div class="flex flex-col items-center justify-center pt-5 pb-6">
-			<svg
-				aria-hidden="true"
-				class="w-10 h-10 mb-3 text-gray-400"
-				fill="none"
-				stroke="currentColor"
-				viewBox="0 0 24 24"
-				xmlns="http://www.w3.org/2000/svg"
-				><path
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					stroke-width="2"
-					d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-				/></svg
-			>
-			<h1 class="text-xl">Watermark</h1>
-			<p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
-				<span class="font-semibold">Click to select</span> or drag and drop
-			</p>
-			<p class="text-xs text-gray-500 dark:text-gray-400">PNG or JPG</p>
+		<div
+			class="flex flex-col items-center justify-center w-96 h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+		>
+			{#if dirHandle}
+				<div class="w-full h-full relative flex flex-col place-items-center">
+					<div class="absolute top-4 right-4">
+						<div
+							class="w-8 h-8"
+							on:click={() => (dirHandle = null)}
+							on:keydown={() => (dirHandle = null)}
+						>
+							<FaRegTimesCircle />
+						</div>
+					</div>
+					<div class="p-4 text-xl flex flex-col flex-grow h-full w-full">
+						<div class="flex flex-row gap-4">
+							<div class="w-8 h-8">
+								<FaRegFolderOpen />
+							</div>
+							<div>/{dirHandle.name}</div>
+						</div>
+						<div class="flex flex-row gap-4">
+							<div class="w-8 h-8">
+								<FaRegImage />
+							</div>
+							<div>{files.length} images</div>
+						</div>
+						<div class="overflow-y-scroll flex-grow p-4">
+							<ul>
+								{#each files as file}
+									<li>{file.name}</li>
+								{/each}
+							</ul>
+						</div>
+					</div>
+				</div>
+			{:else}
+				<div class="flex flex-col items-center justify-center pt-5 pb-6">
+					<div class="w-16">
+						<FaRegFolder />
+					</div>
+
+					<h1 class="text-xl">Image folder</h1>
+					<p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
+						<span class="font-semibold">Click to select</span> or drag and drop
+					</p>
+				</div>
+			{/if}
 		</div>
-		<input id="dropzone-watermark" type="file" class="hidden" bind:this={dropzone} />
-	</label>
+	</div>
+
+	<div
+		class="flex items-center justify-center w-full"
+		bind:this={dropzoneWatermark}
+		on:click={selectWatermark}
+		on:keydown={selectWatermark}
+	>
+		<div
+			class="flex flex-col items-center justify-center w-96 h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+		>
+			{#if watermarkFile}
+				<div class="w-full h-full relative flex place-items-center">
+					<div class="absolute top-4 right-4">
+						<div
+							class="w-8 h-8"
+							on:click={() => (watermarkFile = null)}
+							on:keydown={() => (watermarkFile = null)}
+						>
+							<FaRegTimesCircle />
+						</div>
+					</div>
+					<div class="p-4">
+						<img src={URL.createObjectURL(watermarkFile)} alt="Watermark file" />
+					</div>
+				</div>
+			{:else}
+				<div class="flex flex-col items-center justify-center pt-5 pb-6">
+					<div class="w-16">
+						<FaRegImage />
+					</div>
+
+					<h1 class="text-xl">Watermark</h1>
+					<p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
+						<span class="font-semibold">Click to select</span> or drag and drop
+					</p>
+					<p class="text-xs text-gray-500 dark:text-gray-400">PNG or JPG</p>
+				</div>
+			{/if}
+		</div>
+	</div>
 </div>
-
-<button class="btn btn-primary" on:click={getDirectory}>Select a Directory</button>
-<button class="btn btn-secondary" on:click={getWatermarkFile}>Select a Watermark</button>
-
-<input id="watermark-upload" type="file" class="file-input file-input-bordered w-full max-w-xs" />
-
-{#if watermarkFile}
-	<h2>Watermark:</h2>
-	<img src={URL.createObjectURL(watermarkFile)} />
-{/if}
-
-{#if dirHandle}
-	<h2>Input Directory:</h2>
-	<p>{dirHandle.name}</p>
-	<h2>Number of Images:</h2>
-	<p>{files.length}</p>
-{/if}
