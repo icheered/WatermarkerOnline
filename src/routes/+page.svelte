@@ -15,9 +15,14 @@
 	};
 </script>
 
-<main>
-	<FileSettings bind:watermarkFile bind:files bind:dirHandle />
+<div class="flex flex-col justify-center place-items-center">
+	<div class="text-5xl">Title</div>
+	<div>Explanation</div>
+	<div class="flex flex-col">
+		<FileSettings bind:watermarkFile bind:files bind:dirHandle />
+	</div>
+
 	<WatermarkConfiguration bind:watermarkFile bind:settings />
 	<PreviewWindow bind:files bind:watermarkFile bind:settings />
 	<ExportControls bind:files bind:watermarkFile bind:settings bind:dirHandle />
-</main>
+</div>
