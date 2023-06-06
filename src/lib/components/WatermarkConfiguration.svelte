@@ -2,7 +2,8 @@
 	import type { WatermarkSettings } from '$lib/types';
 	import RadioGrid from '$lib/components/RadioGrid.svelte';
 	import Slider from '$lib/components/Slider.svelte';
-	import { writeFiles, processedFiles } from '$lib/fileHandler';
+	import { writeFiles } from '$lib/fileHandler';
+	import FaCogs from 'svelte-icons/fa/FaCogs.svelte';
 
 	export let files: File[];
 	export let dirHandle: FileSystemDirectoryHandle | null;
@@ -17,7 +18,7 @@
 </script>
 
 <div
-	class="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+	class="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600"
 >
 	{#if watermarkFile}
 		<RadioGrid bind:position={settings.watermarkPosition} />
@@ -28,6 +29,9 @@
 		</div>
 		<button class="btn btn-success" on:click={writeToDisk}>Export files!</button>
 	{:else}
+		<div class="w-16">
+			<FaCogs />
+		</div>
 		Configuration here
 	{/if}
 </div>

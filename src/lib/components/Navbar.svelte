@@ -26,7 +26,7 @@
 </script>
 
 <!-- DaisyUI swap component -->
-<div class="w-full flex justify-end">
+<div class="w-full flex justify-end p-4">
 	<form method="POST" use:enhance={submitUpdateTheme}>
 		<label id="themeswitcher" class="swap swap-rotate">
 			<!-- this hidden checkbox controls the state -->

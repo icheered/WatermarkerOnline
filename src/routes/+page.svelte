@@ -6,7 +6,7 @@
 
 	import type { WatermarkSettings } from '$lib/types';
 
-	let isExporting = true;
+	let isExporting = false;
 
 	let watermarkFile: File | null = null;
 	let files: File[] = [];

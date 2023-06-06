@@ -21,7 +21,7 @@
 </script>
 
 <div
-	class="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300/30 border-dashed rounded-lg bg-gray-50/30 dark:bg-gray-700/30 dark:border-gray-600/30"
+	class="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600"
 >
 	{#if previewImageUrl}
 		<img class="rounded-lg h-[600px]" src={previewImageUrl} alt="Preview of final result" />

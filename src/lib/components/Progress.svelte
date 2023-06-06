@@ -1,13 +1,11 @@
 <script lang="ts">
-	import { processedFiles } from '$lib/fileHandler';
+	import { processedFiles, cancelSignal } from '$lib/fileHandler';
 	import { derived } from 'svelte/store';
 
 	export let isExporting: boolean;
 	export let files: File[];
-	export let dirhandle: FileSystemDirectoryHandle | null;
+	export let dirHandle: FileSystemDirectoryHandle | null;
 	export let watermarkFile: File | null;
-
-	let processing = false;
 
 	// A derived store to calculate the files that still need to be processed
 	const remainingFiles = derived([processedFiles], ([$processedFiles]) =>
@@ -21,11 +19,12 @@
 	);
 
 	function handleCancel() {
+		cancelSignal.set(true);
 		isExporting = false;
 	}
 
 	function handleDone() {
-		dirhandle = null;
+		dirHandle = null;
 		watermarkFile = null;
 		isExporting = false;
 	}
@@ -71,7 +70,11 @@
 		</div>
 		<div class="modal-action">
 			{#if $remainingFiles.length}
-				<button class="btn btn-error mt-4 mx-auto block">Cancel</button>
+				<button
+					class="btn btn-error mt-4 mx-auto block"
+					on:click={handleCancel}
+					on:keydown={handleCancel}>Cancel</button
+				>
 			{:else}
 				<button
 					class="btn btn-success mt-4 mx-auto block"

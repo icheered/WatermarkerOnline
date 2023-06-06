@@ -3,6 +3,8 @@ import type { WatermarkSettings } from '$lib/types';
 import { writable } from 'svelte/store';
 
 export const processedFiles = writable([]);
+export const cancelSignal = writable(false);
+
 
 export async function writeFiles(files: File[], watermarkFile: File | null, settings: WatermarkSettings, dirHandle: FileSystemDirectoryHandle | null) {
     if (!dirHandle || !watermarkFile) {
@@ -20,7 +22,18 @@ export async function writeFiles(files: File[], watermarkFile: File | null, sett
     }
 
     const newDirectoryHandle = await dirHandle.getDirectoryHandle('WATERMARKED', { create: true });
+
+    let cancel = false;
+    const cancelSubscription = cancelSignal.subscribe(value => {
+        cancel = value;
+    });
+
     for (let i = 0; i < files.length; i++) {
+        if (cancel) {
+            console.log('Operation canceled');
+            break;
+        }
+
         const file = files[i];
         const newFileHandle = await newDirectoryHandle.getFileHandle(file.name, {
             create: true
@@ -30,10 +43,10 @@ export async function writeFiles(files: File[], watermarkFile: File | null, sett
         const watermarkedImage = await applyWatermark(file, watermarkFile, settings);
         await watermarkedImage.stream().pipeTo(writable);
 
-        console.log('Wrote file:', file.name);
         processedFiles.update(value => [...value, file.name]);
-
     }
+    cancelSubscription();
+
 }
 
 export async function generatePreview(files: File[], watermarkFile: File | null, settings: WatermarkSettings) {

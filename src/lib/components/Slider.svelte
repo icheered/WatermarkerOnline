@@ -29,6 +29,6 @@
 		bind:value={tempValue}
 		on:blur={updateValue}
 		on:keydown={(e) => e.key === 'Enter' && updateValue()}
-		class="input input-bordered max-w-xs col-span-1 text-center"
+		class="input input-bordered col-span-1 text-center p-0 m-0"
 	/>
 </div>
