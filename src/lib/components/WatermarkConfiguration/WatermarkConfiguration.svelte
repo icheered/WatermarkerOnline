@@ -7,13 +7,17 @@
 	export let files: File[];
 	export let watermarkFile: File | null;
 	export let settings: WatermarkSettings;
+
+	$: isActive = watermarkFile && files && files.length;
 </script>
 
 <div
-	class="flex flex-col items-center justify-center w-96 p-2 h-full border-2 border-gray-300 border-dashed rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600"
+	class="flex flex-col items-center justify-center w-96 p-2 h-full border-2 border-gray-300 border-dashed rounded-lg dark:border-gray-600 {isActive
+		? 'bg-gray-50 dark:bg-gray-700'
+		: ''}"
 >
-	{#if watermarkFile && files && files.length}
-		<div class="flex flex-row place-items-center gap-8 justify-center w-full">
+	{#if isActive}
+		<div class="flex flex-row place-items-center gap-8 justify-center w-full pt-4">
 			<div>Position</div>
 			<RadioGrid bind:position={settings.watermarkPosition} />
 		</div>
@@ -24,7 +28,9 @@
 			<Slider bind:value={settings.padding} min={1} max={100} name="Offset" />
 		</div>
 	{:else}
-		<div class="h-96 w-full flex flex-col justify-center place-items-center">
+		<div
+			class="h-96 w-full flex flex-col justify-center place-items-center text-gray-400 dark:text-gray-600"
+		>
 			<div class="w-16">
 				<FaCogs />
 			</div>

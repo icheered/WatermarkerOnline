@@ -18,7 +18,7 @@
 	{#each positions as pos}
 		<input
 			type="radio"
-			class="radio"
+			class="radio checked:bg-primary-light dark:checked:bg-primary-dark"
 			bind:group={position}
 			value={pos}
 			on:click={() => (position = pos)}
