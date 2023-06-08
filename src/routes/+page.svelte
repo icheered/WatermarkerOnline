@@ -49,9 +49,7 @@
 <div class="flex flex-col justify-center place-items-center">
 	<div class="text-7xl">Watermarker</div>
 	<a href="https://icheered.nl/" target="_blank">
-		Made by <span class="underline light:text-primary-light dark:text-primary-dark">
-			ICheered
-		</span>
+		Made by <span class="underline text-primary-light dark:text-primary-dark"> ICheered </span>
 	</a>
 
 	<Stepper>
