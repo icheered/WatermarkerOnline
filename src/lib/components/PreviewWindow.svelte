@@ -24,10 +24,10 @@
 	class="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600"
 >
 	{#if previewImageUrl}
-		<img class="rounded-lg h-[600px]" src={previewImageUrl} alt="Preview of final result" />
+		<img class="rounded-lg" src={previewImageUrl} alt="Preview of final result" />
 		<!-- <img class="rounded-lg h-[600px]" src="vertical.jpg" /> -->
 	{:else}
-		<div class="h-96 flex flex-col w-full justify-center place-items-center">
+		<div class="flex flex-col w-full justify-center place-items-center">
 			<div class="w-16">
 				<FaRegImage />
 			</div>

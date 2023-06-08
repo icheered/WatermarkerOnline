@@ -11,7 +11,7 @@
 	export let watermarkFile: File | null;
 	export let dirHandle: FileSystemDirectoryHandle | null;
 
-	let dropzoneWatermark, dropzoneFolder; // Moved dropzone here
+	let dropzoneWatermark, dropzoneFolder;
 
 	function setupDropzone(dropzone, onFile, onDirectory) {
 		if (dropzone) {
@@ -113,7 +113,7 @@
 
 <div class="flex flex-row w-full gap-8 p-8">
 	<div
-		class="flex items-center justify-center w-full"
+		class="flex items-center justify-center"
 		bind:this={dropzoneFolder}
 		on:click={selectDirectory}
 		on:keydown={selectDirectory}
@@ -170,7 +170,7 @@
 	</div>
 
 	<div
-		class="flex items-center justify-center w-full"
+		class="flex items-center justify-center"
 		bind:this={dropzoneWatermark}
 		on:click={selectWatermark}
 		on:keydown={selectWatermark}
