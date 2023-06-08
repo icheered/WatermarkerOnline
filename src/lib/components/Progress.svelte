@@ -43,7 +43,7 @@
 			</div>
 			<div class="mx-auto mt-4 bg-gray-300 w-3/4 rounded-full">
 				<div
-					class="bg-blue-500 text-xs leading-none py-1 text-center text-white rounded-full"
+					class="bg-primary-ligh dark:bg-primary-dark text-xs leading-none py-1 text-center text-white rounded-full"
 					style="width: {$progress}%"
 				>
 					{$progress.toFixed(0)}%
@@ -71,13 +71,13 @@
 		<div class="modal-action">
 			{#if $remainingFiles.length}
 				<button
-					class="btn btn-error mt-4 mx-auto block"
+					class="btn btn-neutral mt-4 mx-auto block"
 					on:click={handleCancel}
 					on:keydown={handleCancel}>Cancel</button
 				>
 			{:else}
 				<button
-					class="btn btn-success mt-4 mx-auto block"
+					class="btn mx-auto border-none bg-primary-light dark:bg-primary-dark dark:text-white"
 					on:click={handleDone}
 					on:keydown={handleDone}>Done</button
 				>

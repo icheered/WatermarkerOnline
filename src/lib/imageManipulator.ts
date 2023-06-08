@@ -19,6 +19,9 @@ export async function applyWatermark(imageBlob: Blob, watermarkBlob: Blob, setti
     const watermarkWidthScaled = watermark.width * scaleFactor;
     const watermarkHeightScaled = watermark.height * scaleFactor;
 
+    const paddingWidth = watermarkWidthScaled * (settings.padding / 100);
+    const paddingHeight = watermarkHeightScaled * (settings.padding / 100);
+
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     canvas.width = image.width;
@@ -26,16 +29,17 @@ export async function applyWatermark(imageBlob: Blob, watermarkBlob: Blob, setti
     ctx.drawImage(image, 0, 0);
 
     const positionCalculator = {
-        'topleft': () => ({ x: 0, y: 0 }),
-        'topcenter': () => ({ x: (image.width / 2) - (watermarkWidthScaled / 2), y: 0 }),
-        'topright': () => ({ x: image.width - watermarkWidthScaled, y: 0 }),
-        'left': () => ({ x: 0, y: (image.height / 2) - (watermarkHeightScaled / 2) }),
+        'topleft': () => ({ x: paddingWidth, y: paddingHeight }),
+        'topcenter': () => ({ x: (image.width / 2) - (watermarkWidthScaled / 2), y: paddingHeight }),
+        'topright': () => ({ x: image.width - watermarkWidthScaled - paddingWidth, y: paddingHeight }),
+        'left': () => ({ x: paddingWidth, y: (image.height / 2) - (watermarkHeightScaled / 2) }),
         'center': () => ({ x: (image.width / 2) - (watermarkWidthScaled / 2), y: (image.height / 2) - (watermarkHeightScaled / 2) }),
-        'right': () => ({ x: image.width - watermarkWidthScaled, y: (image.height / 2) - (watermarkHeightScaled / 2) }),
-        'bottomleft': () => ({ x: 0, y: image.height - watermarkHeightScaled }),
-        'bottomcenter': () => ({ x: (image.width / 2) - (watermarkWidthScaled / 2), y: image.height - watermarkHeightScaled }),
-        'bottomright': () => ({ x: image.width - watermarkWidthScaled, y: image.height - watermarkHeightScaled })
+        'right': () => ({ x: image.width - watermarkWidthScaled - paddingWidth, y: (image.height / 2) - (watermarkHeightScaled / 2) }),
+        'bottomleft': () => ({ x: paddingWidth, y: image.height - watermarkHeightScaled - paddingHeight }),
+        'bottomcenter': () => ({ x: (image.width / 2) - (watermarkWidthScaled / 2), y: image.height - watermarkHeightScaled - paddingHeight }),
+        'bottomright': () => ({ x: image.width - watermarkWidthScaled - paddingWidth, y: image.height - watermarkHeightScaled - paddingHeight })
     };
+
 
     const { x: watermarkX, y: watermarkY } = positionCalculator[settings.watermarkPosition]();
 

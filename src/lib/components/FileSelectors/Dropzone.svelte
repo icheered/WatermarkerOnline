@@ -7,6 +7,7 @@
 
 	export let handle: FileSystemFileHandle | FileSystemDirectoryHandle | null;
 	export let expectedFormat: 'file' | 'directory';
+	export let title: string;
 	export let handleDropFunction: Function;
 	export let onClickFunction: Promise<void> | Function;
 	export let onCloseFunction: Promise<void> | Function;
@@ -80,7 +81,7 @@
 					{/if}
 				</div>
 
-				<h1 class="text-xl">{expectedFormat}</h1>
+				<h1 class="text-xl">{title}</h1>
 				<p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
 					<span class="font-semibold">Click to select</span> or drag and drop
 				</p>

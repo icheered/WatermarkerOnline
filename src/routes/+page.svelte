@@ -1,93 +1,79 @@
 <script lang="ts">
-	import FileSettings from '$lib/components/FileSettings.svelte';
-	import WatermarkConfiguration from '$lib/components/WatermarkConfiguration.svelte';
+	import WatermarkConfiguration from '$lib/components/WatermarkConfiguration/WatermarkConfiguration.svelte';
 	import PreviewWindow from '$lib/components/PreviewWindow.svelte';
-	import Progress from '$lib/components/Progress.svelte';
 
-	import WatermarkSelector from '$lib/components/WatermarkSelector.svelte';
-	import FolderSelector from '$lib/components/FolderSelector.svelte';
+	import Stepper from '$lib/components/Stepper/Stepper.svelte';
+	import Step from '$lib/components/Stepper/Step.svelte';
+
+	import WatermarkSelector from '$lib/components/FileSelectors/WatermarkSelector.svelte';
+	import FolderSelector from '$lib/components/FileSelectors/FolderSelector.svelte';
+	import ExportButton from '$lib/components/ExportButton.svelte';
+
+	import Progress from '$lib/components/Progress.svelte';
+	import MobilePopup from '$lib/components/MobilePopup.svelte';
 
 	import type { WatermarkSettings } from '$lib/types';
 
 	let isExporting = false;
 
+	let watermarkFileHandle: FileSystemFileHandle | null;
 	let watermarkFile: File | null = null;
-	let files: File[] = [];
+
 	let dirHandle: FileSystemDirectoryHandle | null = null;
+	let files: File[] = [];
+
+	let previewImageUrl: string = '';
 
 	let settings: WatermarkSettings = {
 		watermarkPosition: 'bottomright',
 		opacity: 80,
-		scale: 20
+		scale: 20,
+		padding: 20
 	};
+
+	let currentStep = 1;
+
+	$: {
+		if (!watermarkFile || !watermarkFileHandle) {
+			currentStep = 1;
+		} else if (!dirHandle || !files) {
+			currentStep = 2;
+		} else if (!previewImageUrl) {
+			currentStep = 3;
+		} else {
+			currentStep = 5;
+		}
+	}
 </script>
 
 <div class="flex flex-col justify-center place-items-center">
-	<div class="text-5xl">Watermarker</div>
-	<div>Quickly add a watermark to a lot of images</div>
-	<ul class="steps steps-vertical w-2/3 pt-24">
-		<li class="step step-primary w-full py-8">
-			<div class="w-full flex flex-row h-full items-center justify-between">
-				<div class="flex flex-col w-full pb-6">
-					<div>Select watermark</div>
-					<div class="h-1 bg-gray-700 w-full" />
-				</div>
+	<div class="text-7xl">Watermarker</div>
+	<a href="https://icheered.nl/" target="_blank">
+		Made by <span class="underline light:text-primary-light dark:text-primary-dark">
+			ICheered
+		</span>
+	</a>
 
-				<WatermarkSelector bind:watermarkFile />
-			</div>
-		</li>
-		<li class="step step-primary w-full">
-			<div class="w-full flex flex-row h-full items-center justify-between">
-				<div class="flex flex-col w-full pb-6">
-					<div>Select folder</div>
-					<div class="h-1 bg-gray-700 w-full" />
-				</div>
-				<FolderSelector bind:files bind:dirHandle />
-			</div>
-		</li>
-		<li class="step w-full">
-			<div class="w-full flex flex-row h-full items-center justify-between">
-				<div class="flex flex-col w-full pb-6">
-					<div>Preview</div>
-					<div class="h-1 bg-gray-700 w-full" />
-				</div>
-				<PreviewWindow bind:files bind:watermarkFile bind:settings />
-			</div>
-		</li>
+	<Stepper>
+		<Step number={1} bind:currentStep text="Select watermark" first={true}>
+			<WatermarkSelector bind:watermarkFile bind:watermarkFileHandle />
+		</Step>
+		<Step number={2} bind:currentStep text="Select image folder">
+			<FolderSelector bind:files bind:dirHandle />
+		</Step>
+		<Step number={3} bind:currentStep text="Preview image">
+			<PreviewWindow bind:files bind:watermarkFile bind:settings bind:previewImageUrl />
+		</Step>
+		<Step number={4} bind:currentStep text="Adjust watermark">
+			<WatermarkConfiguration bind:files bind:watermarkFile bind:settings />
+		</Step>
 
-		<li class="step w-full">
-			<div class="w-full flex flex-row h-full items-center justify-between">
-				<div class="flex flex-col w-full pb-6">
-					<div>Configure</div>
-					<div class="h-1 bg-gray-700 w-full" />
-				</div>
-				<WatermarkConfiguration
-					bind:files
-					bind:watermarkFile
-					bind:settings
-					bind:dirHandle
-					bind:isExporting
-				/>
-			</div>
-		</li>
-	</ul>
+		<Step number={5} bind:currentStep text="Export" last={true}>
+			<ExportButton bind:files bind:watermarkFile bind:settings bind:dirHandle bind:isExporting />
+		</Step>
+	</Stepper>
 	{#if isExporting}
 		<Progress bind:files bind:isExporting bind:dirHandle bind:watermarkFile />
 	{/if}
-	<!-- <FileSettings bind:watermarkFile bind:files bind:dirHandle /> -->
-
-	<!-- <div class="w-full flex flex-row justify-around p-4 gap-4">
-		<div class="w-2/3">
-			<PreviewWindow bind:files bind:watermarkFile bind:settings />
-		</div>
-		<div class="w-1/3">
-			<WatermarkConfiguration
-				bind:files
-				bind:watermarkFile
-				bind:settings
-				bind:dirHandle
-				bind:isExporting
-			/>
-		</div>
-	</div> -->
+	<MobilePopup />
 </div>

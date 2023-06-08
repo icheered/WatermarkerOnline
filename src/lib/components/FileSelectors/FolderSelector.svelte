@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Dragzone from '$lib/components/Dropzone.svelte';
+	import Dragzone from '$lib/components/FileSelectors/Dropzone.svelte';
 	import FaRegFolderOpen from 'svelte-icons/fa/FaRegFolderOpen.svelte';
 	import FaRegImage from 'svelte-icons/fa/FaRegImage.svelte';
 
@@ -46,6 +46,7 @@
 <Dragzone
 	bind:handle={dirHandle}
 	expectedFormat="directory"
+	title="Image folder"
 	{onCloseFunction}
 	handleDropFunction={onDropHandleDirectory}
 	onClickFunction={onClickDirectory}

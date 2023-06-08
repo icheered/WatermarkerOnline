@@ -3,6 +3,8 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
+	import HelpButton from '$lib/components/HelpButton.svelte';
+
 	import FaMoon from 'svelte-icons/fa/FaMoon.svelte';
 	import FaSun from 'svelte-icons/fa/FaSun.svelte';
 
@@ -26,7 +28,10 @@
 </script>
 
 <!-- DaisyUI swap component -->
-<div class="w-full flex justify-end p-4">
+<div class=" flex place-items-center justify-end h-full p-4 gap-x-8">
+	<HelpButton />
+
+	<a class="btn btn-neutral" href="https://icheered.nl/" target="_blank">Contact</a>
 	<form method="POST" use:enhance={submitUpdateTheme}>
 		<label id="themeswitcher" class="swap swap-rotate">
 			<!-- this hidden checkbox controls the state -->

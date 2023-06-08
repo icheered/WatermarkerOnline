@@ -11,7 +11,7 @@
 	};
 </script>
 
-<div class="grid grid-cols-5 items-center gap-2">
+<div class="grid grid-cols-5 w-full items-center">
 	<div class="col-span-1">{name}</div>
 
 	<input

@@ -1,8 +1,8 @@
 <script lang="ts">
-	import Dragzone from '$lib/components/Dropzone.svelte';
+	import Dragzone from '$lib/components/FileSelectors/Dropzone.svelte';
 
 	export let watermarkFile: File | null;
-	let watermarkFileHandle: FileSystemFileHandle | null;
+	export let watermarkFileHandle: FileSystemFileHandle | null;
 
 	async function onClickSelectWatermark() {
 		console.log('Clicked watermark');
@@ -39,13 +39,14 @@
 <Dragzone
 	bind:handle={watermarkFileHandle}
 	expectedFormat="file"
+	title="Watermark"
 	{onCloseFunction}
 	handleDropFunction={onDropHandleWatermark}
 	onClickFunction={onClickSelectWatermark}
 >
 	{#if watermarkFile}
 		<div class="p-4">
-			<img class="h-24" src={URL.createObjectURL(watermarkFile)} alt="Watermark file" />
+			<img class="h-full" src={URL.createObjectURL(watermarkFile)} alt="Watermark file" />
 		</div>
 	{/if}
 </Dragzone>
