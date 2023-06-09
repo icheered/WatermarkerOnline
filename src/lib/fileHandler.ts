@@ -46,7 +46,6 @@ export async function writeFiles(files: File[], watermarkFile: File | null, sett
         processedFiles.update(value => [...value, file.name]);
     }
     cancelSubscription();
-
 }
 
 export async function generatePreview(files: File[], watermarkFile: File | null, settings: WatermarkSettings) {

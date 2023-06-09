@@ -7,7 +7,6 @@ export async function applyWatermark(imageBlob: Blob, watermarkBlob: Blob, setti
         return new Promise((res) => ((image.onload = res), (image.onerror = res))).then(() => image);
     };
 
-
     const [image, watermark] = await Promise.all([loadImage(imageBlob), loadImage(watermarkBlob)]);
 
     // Calculate scaling factor

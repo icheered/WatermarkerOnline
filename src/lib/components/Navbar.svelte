@@ -33,7 +33,7 @@
 
 	<a class="btn btn-neutral" href="https://icheered.nl/" target="_blank">Contact</a>
 	<form method="POST" use:enhance={submitUpdateTheme}>
-		<label id="themeswitcher" class="swap swap-rotate">
+		<label id="themeswitcher" class="swap swap-rotate swap-active">
 			<!-- this hidden checkbox controls the state -->
 			<input type="checkbox" />
 
