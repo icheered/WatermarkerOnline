@@ -11,6 +11,7 @@
 
 	import Progress from '$lib/components/Progress.svelte';
 	import MobilePopup from '$lib/components/MobilePopup.svelte';
+	import NonChromePopup from '$lib/components/NonChromePopup.svelte';
 
 	import type { WatermarkSettings } from '$lib/types';
 
@@ -74,4 +75,5 @@
 		<Progress bind:files bind:isExporting bind:dirHandle bind:watermarkFile />
 	{/if}
 	<MobilePopup />
+	<NonChromePopup />
 </div>
